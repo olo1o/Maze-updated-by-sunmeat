@@ -8,6 +8,7 @@ HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 enum Color { DARKGREEN = 2, YELLOW = 14, RED = 12, BLUE = 9, WHITE = 15, DARKYELLOW = 6, DARKRED = 4 };
 COORD infobox;
 int health = 100; // количество очков здоровья главного героя
+int steps = 0; // steps
 
 void ShowHealth()
 {
@@ -18,6 +19,15 @@ void ShowHealth()
 	cout << "HEALTH: ";
 	SetConsoleTextAttribute(h, Color::RED);
 	cout << health << " \n";
+}
+void ShowSteps()
+{
+	infobox.Y = 7;
+	SetConsoleCursorPosition(h, infobox);
+	SetConsoleTextAttribute(h, Color::DARKGREEN);
+	cout << "STEPS: ";
+	SetConsoleTextAttribute(h, Color::DARKGREEN);
+	cout << steps << " \n";
 }
 int main()
 {
@@ -143,6 +153,7 @@ int main()
 	int energy = 50; // energy
 	int strike = 5; // strike
 
+
 	/////////////////////////////////////////////////////////////////////
 	// информация по всем показателям
 	
@@ -169,6 +180,8 @@ int main()
 	cout << "STRIKE: ";
 	SetConsoleTextAttribute(h, Color::WHITE);
 	cout << strike << "\n";
+
+	ShowSteps();
 
 	while (true)
 	{
@@ -314,6 +327,7 @@ int main()
 				&& maze[position.Y][position.X - 1] != MazeObject::WALL
 				&& maze[position.Y][position.X - 1] != MazeObject::BORDER)
 			{
+				steps++;
 				position.X--;
 				energy--;
 				infobox.X = WIDTH + 1;
@@ -323,6 +337,7 @@ int main()
 				cout << "ENERGY: ";
 				SetConsoleTextAttribute(h, Color::BLUE);
 				cout << energy << " \n";
+				ShowSteps();
 			}
 			else if (code == KeyCode::RIGHT // если я собрался пойти направо
 				&& maze[position.Y][position.X + 1] != MazeObject::WALL
@@ -330,6 +345,7 @@ int main()
 				// и при этом в лабиринте на той же строке (где смайлик) и
 				// немного (на одну ячейку) правее на 1 столбец от смайлика
 			{
+				steps++;
 				position.X++;
 				energy--;
 				infobox.X = WIDTH + 1;
@@ -339,11 +355,13 @@ int main()
 				cout << "ENERGY: ";
 				SetConsoleTextAttribute(h, Color::BLUE);
 				cout << energy << " \n";
+				ShowSteps();
 			}
 			else if (code == KeyCode::UP
 				&& maze[position.Y - 1][position.X] != MazeObject::WALL
 				&& maze[position.Y - 1][position.X] != MazeObject::BORDER)
 			{
+				steps++;
 				position.Y--;
 				energy--;
 				infobox.X = WIDTH + 1;
@@ -353,11 +371,13 @@ int main()
 				cout << "ENERGY: ";
 				SetConsoleTextAttribute(h, Color::BLUE);
 				cout << energy << " \n";
+				ShowSteps();
 			}
 			else if (code == KeyCode::DOWN
 				&& maze[position.Y + 1][position.X] != MazeObject::WALL
 				&& maze[position.Y + 1][position.X] != MazeObject::BORDER)
 			{
+				steps++;
 				position.Y++;
 				energy--;
 				infobox.X = WIDTH + 1;
@@ -367,6 +387,7 @@ int main()
 				cout << "ENERGY: ";
 				SetConsoleTextAttribute(h, Color::BLUE);
 				cout << energy << " \n";
+				ShowSteps();
 			}
 
 			// показ персонажика в новой позиции

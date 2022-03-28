@@ -122,7 +122,7 @@ int main()
 			
 				if (close <= 0)
 				{
-					int spawnkid = rand() % 10;
+					int spawnkid = rand() % 60;
 					if (spawnkid == 9 && kid != 3)
 					{
 						kid++;

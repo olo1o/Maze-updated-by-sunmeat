@@ -1,7 +1,11 @@
 ﻿#include <iostream>
 #include <windows.h>
 #include <conio.h>
+
 using namespace std;
+
+void ShowSteps();
+void ShowHealth();
 
 const int WIDTH = 30;// ширина лабиринта
 HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -34,7 +38,7 @@ int main()
 	
 	// enumeration (перечисление - это набор именованных целочисленных констант)
 	// MazeObject - пользовательский (кастомизированный) тип данных
-	enum MazeObject { HALL, WALL, COIN, ENEMY, BORDER, CROSS };
+	enum MazeObject { HALL, WALL, COIN, ENEMY, BORDER, AIDKIT, CROSS };
 	enum KeyCode { ENTER = 13, ESCAPE = 27, SPACE = 32, LEFT = 75, RIGHT = 77, UP = 72, DOWN = 80 };
 
 
@@ -60,47 +64,71 @@ int main()
 	// 1850 - ширина окна консоли в пикселях
 	// 900 - высота окна консоли
 	// true - перерисовать окно после перемещения
-
+	
 	srand(time(0));
 
  
 	const int HEIGHT = 10; // высота лабиринта
 
 	int maze[HEIGHT][WIDTH] = {}; // maze - лабиринт по-английски
-
+	int kid = 0;
+	
 	// алгоритм заполнения массива
 	for (int y = 0; y < HEIGHT; y++) // перебор строк
 	{
 		for (int x = 0; x < WIDTH; x++) // перебор столбцов
 		{
-			maze[y][x] = rand() % 4; // 4 типа объектов в игре
+			int random = rand() % 4;
+			int close = 0;
+				maze[y][x] = random; // 4 типа объектов в игре
 
-			if (maze[y][x] == MazeObject::ENEMY) // если в лабиринте сгенерился враг
-			{
-				int probability = rand() % 10; // 0...9, если выпало 0 - враг останется, останется только одна пятая часть врагов
-				if (probability != 0) // убираем врага
+				if (maze[y][x] == MazeObject::ENEMY) // если в лабиринте сгенерился враг
 				{
-					maze[y][x] = MazeObject::HALL; // на место врага ставим коридор
+					int probability = rand() % 10; // 0...9, если выпало 0 - враг останется, останется только одна пятая часть врагов
+					if (probability != 0) // убираем врага
+					{
+						maze[y][x] = MazeObject::HALL; // на место врага ставим коридор
+					}
 				}
-			}
 
-			if (maze[y][x] == MazeObject::WALL) // если в лабиринте сгенерировалась стена
-			{
-				int probability = rand() % 2; // 0...1, если выпало 0 - стена останется, останется только половина стен
-				if (probability != 0) // убираем стену
+				if (maze[y][x] == MazeObject::WALL) // если в лабиринте сгенерировалась стена
 				{
-					maze[y][x] = MazeObject::HALL; // на место стены ставим коридор
+					int probability = rand() % 2; // 0...1, если выпало 0 - стена останется, останется только половина стен
+					if (probability == 1) // убираем стену
+					{
+						maze[y][x] = MazeObject::HALL; // на место стены ставим коридор
+					}
 				}
-			}
 
-			if (x == 0 || y == 0 || x == WIDTH - 1 || y == HEIGHT - 1) maze[y][x] = MazeObject::BORDER; // белая рамка
+				if (x == 0 || y == 0 || x == WIDTH - 1 || y == HEIGHT - 1)
+				{
+					maze[y][x] = MazeObject::BORDER; // белая рамка
+					close++;
+				}
 
-			if (x == 0 && y == 2 || x == 1 && y == 2 || x == 2 && y == 2) maze[y][x] = MazeObject::HALL; // вход
+				if (x == 0 && y == 2 || x == 1 && y == 2 || x == 2 && y == 2)
+				{
+					maze[y][x] = MazeObject::HALL; // вход
+					close++;
+				}
 
-			if (x == WIDTH - 1 && y == HEIGHT - 3 ||
-				x == WIDTH - 2 && y == HEIGHT - 3 ||
-				x == WIDTH - 3 && y == HEIGHT - 3) maze[y][x] = MazeObject::HALL; // выход
-
+				if (x == WIDTH - 1 && y == HEIGHT - 3 ||
+					x == WIDTH - 2 && y == HEIGHT - 3 ||
+					x == WIDTH - 3 && y == HEIGHT - 3)
+				{
+					maze[y][x] = MazeObject::HALL; // выход
+					close++;
+				}
+			
+				if (close <= 0)
+				{
+					int spawnkid = rand() % 10;
+					if (spawnkid == 9 && kid != 3)
+					{
+						kid++;
+						maze[y][x] = MazeObject::AIDKIT;
+					}
+				}
 		}
 	}
 
@@ -133,6 +161,10 @@ int main()
 			case MazeObject::ENEMY: // enemy - враг
 				SetConsoleTextAttribute(h, Color::RED);
 				cout << (char)1;
+				break;
+			case MazeObject::AIDKIT: // aidkit - аптечка
+				SetConsoleTextAttribute(h, Color::RED);
+				cout << "+";
 				break;
 			}
 		}
@@ -454,6 +486,11 @@ int main()
 						exit(0);
 					}
 				}
+			}
+			if (maze[position.Y][position.X] == MazeObject::AIDKIT)
+			{
+				health = 100;
+				ShowHealth();
 			}
 		}
 		else // нажатия не было, двигаем врагов

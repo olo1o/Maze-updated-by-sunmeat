@@ -6,6 +6,9 @@ using namespace std;
 
 void ShowSteps();
 void ShowHealth();
+void ShowCoin();
+void ShowEnergy();
+void ShowStrike();
 
 const int WIDTH = 30;// ширина лабиринта
 HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -13,6 +16,9 @@ enum Color { DARKGREEN = 2, YELLOW = 14, RED = 12, BLUE = 9, WHITE = 15, DARKYEL
 COORD infobox;
 int health = 100; // количество очков здоровья главного героя
 int steps = 0; // steps
+int coins = 0; // счётчик собранных монет
+int energy = 50; // energy
+int strike = 5; // strike
 
 void ShowHealth()
 {
@@ -32,6 +38,34 @@ void ShowSteps()
 	cout << "STEPS: ";
 	SetConsoleTextAttribute(h, Color::DARKGREEN);
 	cout << steps << " \n";
+}
+void ShowCoin()
+{
+	infobox.X = WIDTH + 1;
+	infobox.Y = 1;
+	SetConsoleCursorPosition(h, infobox);
+	SetConsoleTextAttribute(h, Color::DARKYELLOW);
+	cout << "COINS: ";
+	SetConsoleTextAttribute(h, Color::YELLOW);
+	cout << coins << "\n";
+}
+void ShowEnergy()
+{
+	infobox.Y = 3;
+	SetConsoleCursorPosition(h, infobox);
+	SetConsoleTextAttribute(h, Color::BLUE);
+	cout << "ENERGY: ";
+	SetConsoleTextAttribute(h, Color::BLUE);
+	cout << energy << "\n";
+}
+void ShowStrike()
+{
+	infobox.Y = 4;
+	SetConsoleCursorPosition(h, infobox);
+	SetConsoleTextAttribute(h, Color::WHITE);
+	cout << "STRIKE: ";
+	SetConsoleTextAttribute(h, Color::WHITE);
+	cout << strike << "\n";
 }
 int main()
 {
@@ -181,37 +215,17 @@ int main()
 	SetConsoleTextAttribute(h, Color::BLUE);
 	cout << (char)2;
 
-	int coins = 0; // счётчик собранных монет
-	int energy = 50; // energy
-	int strike = 5; // strike
-
 
 	/////////////////////////////////////////////////////////////////////
 	// информация по всем показателям
 	
-	infobox.X = WIDTH + 1;
-	infobox.Y = 1;
-	SetConsoleCursorPosition(h, infobox);
-	SetConsoleTextAttribute(h, Color::DARKYELLOW);
-	cout << "COINS: ";
-	SetConsoleTextAttribute(h, Color::YELLOW);
-	cout << coins << "\n"; // 0
+	ShowCoin();
 
 	ShowHealth();
 
-	infobox.Y = 3;
-	SetConsoleCursorPosition(h, infobox);
-	SetConsoleTextAttribute(h, Color::BLUE);
-	cout << "ENERGY: ";
-	SetConsoleTextAttribute(h, Color::BLUE);
-	cout << energy << "\n";
+	ShowEnergy();
 	
-	infobox.Y = 4;
-	SetConsoleCursorPosition(h, infobox);
-	SetConsoleTextAttribute(h, Color::WHITE);
-	cout << "STRIKE: ";
-	SetConsoleTextAttribute(h, Color::WHITE);
-	cout << strike << "\n";
+	ShowStrike();
 
 	ShowSteps();
 
@@ -231,12 +245,7 @@ int main()
 			if (code == KeyCode::ENTER && strike != 0)
 			{
 				strike--;
-				infobox.Y = 4;
-				SetConsoleCursorPosition(h, infobox);
-				SetConsoleTextAttribute(h, Color::WHITE);
-				cout << "STRIKE: ";
-				SetConsoleTextAttribute(h, Color::WHITE);
-				cout << strike << " \n";
+				ShowStrike();
 			}
 
 			if (code == KeyCode::ENTER && strike >= 1)
@@ -362,13 +371,7 @@ int main()
 				steps++;
 				position.X--;
 				energy--;
-				infobox.X = WIDTH + 1;
-				infobox.Y = 3;
-				SetConsoleCursorPosition(h, infobox);
-				SetConsoleTextAttribute(h, Color::BLUE);
-				cout << "ENERGY: ";
-				SetConsoleTextAttribute(h, Color::BLUE);
-				cout << energy << " \n";
+				ShowEnergy();
 				ShowSteps();
 			}
 			else if (code == KeyCode::RIGHT // если я собрался пойти направо
@@ -380,13 +383,7 @@ int main()
 				steps++;
 				position.X++;
 				energy--;
-				infobox.X = WIDTH + 1;
-				infobox.Y = 3;
-				SetConsoleCursorPosition(h, infobox);
-				SetConsoleTextAttribute(h, Color::BLUE);
-				cout << "ENERGY: ";
-				SetConsoleTextAttribute(h, Color::BLUE);
-				cout << energy << " \n";
+				ShowEnergy();
 				ShowSteps();
 			}
 			else if (code == KeyCode::UP
@@ -396,13 +393,7 @@ int main()
 				steps++;
 				position.Y--;
 				energy--;
-				infobox.X = WIDTH + 1;
-				infobox.Y = 3;
-				SetConsoleCursorPosition(h, infobox);
-				SetConsoleTextAttribute(h, Color::BLUE);
-				cout << "ENERGY: ";
-				SetConsoleTextAttribute(h, Color::BLUE);
-				cout << energy << " \n";
+				ShowEnergy();
 				ShowSteps();
 			}
 			else if (code == KeyCode::DOWN
@@ -412,13 +403,7 @@ int main()
 				steps++;
 				position.Y++;
 				energy--;
-				infobox.X = WIDTH + 1;
-				infobox.Y = 3;
-				SetConsoleCursorPosition(h, infobox);
-				SetConsoleTextAttribute(h, Color::BLUE);
-				cout << "ENERGY: ";
-				SetConsoleTextAttribute(h, Color::BLUE);
-				cout << energy << " \n";
+				ShowEnergy();
 				ShowSteps();
 			}
 
@@ -455,13 +440,7 @@ int main()
 			if (maze[position.Y][position.X] == MazeObject::COIN)
 			{
 				coins++; // на одну монетку собрали больше
-				infobox.X = WIDTH + 1;
-				infobox.Y = 1;
-				SetConsoleCursorPosition(h, infobox);
-				SetConsoleTextAttribute(h, Color::DARKYELLOW);
-				cout << "COINS: ";
-				SetConsoleTextAttribute(h, Color::YELLOW);
-				cout << coins << "\n";
+				ShowCoin();
 				maze[position.Y][position.X] = MazeObject::HALL; // убираем монетку из лабиринта
 			}
 
